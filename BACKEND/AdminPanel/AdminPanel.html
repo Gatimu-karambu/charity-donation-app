@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .title h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            min-width: 150px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-received {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-received {
+            background: #22c55e;
+            color: white;
+            border: none;
+        }
+
+        .btn-received:hover {
+            background: #16a34a;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .donor-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .donor-name {
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .donor-phone {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #22c55e;
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">
+                <h1>Donation Management</h1>
+                <p>Manage and track all donations</p>
+            </div>
+            <div class="filter">
+                <select id="statusFilter">
+                    <option value="all">All Donations</option>
+                    <option value="pending">Pending</option>
+                    <option value="received">Received</option>
+                </select>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Donor</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="donationsTable">
+                <!-- Donations will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for updating status -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <h2>Update Donation Status</h2>
+                <p>Change the status of this donation</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-received" onclick="updateStatus('received')">
+                    Mark as Received
+                </button>
+                <button class="btn" onclick="updateStatus('pending')">
+                    Mark as Pending
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // First, clean up the database statuses
+        async function cleanupStatuses() {
+            try {
+                await fetch('http://localhost:5000/api/cleanup-status', {
+                    method: 'POST'
+                });
+                // After cleanup, fetch the donations
+                await fetchDonations();
+            } catch (error) {
+                console.error('Error cleaning up statuses:', error);
+            }
+        }
+
+        let donations = [];
+        let selectedDonationId = null;
+        const modal = document.getElementById('statusModal');
+        const closeBtn = document.querySelector('.close');
+        const statusFilter = document.getElementById('statusFilter');
+        const toast = document.getElementById('toast');
+
+        async function fetchDonations() {
+            try {
+                const response = await fetch('http://localhost:5000/api/donations/all');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch donations');
+                }
+                donations = await response.json();
+                renderDonations();
+            } catch (error) {
+                console.error('Error fetching donations:', error);
+                showToast('Error loading donations', 'error');
+            }
+        }
+
+        function renderDonations() {
+            const tbody = document.getElementById('donationsTable');
+            const filterValue = statusFilter.value.toLowerCase();
+            
+            const filteredDonations = donations.filter(donation => 
+                filterValue === 'all' || donation.status.toLowerCase() === filterValue
+            );
+
+            tbody.innerHTML = filteredDonations.map(donation => `
+                <tr>
+                    <td>
+                        <div class="donor-info">
+                            <span class="donor-name">${donation.name || 'Anonymous'}</span>
+                            <span class="donor-phone">${donation.phone}</span>
+                        </div>
+                    </td>
+                    <td>${donation.donationType}</td>
+                    <td>${donation.description || '-'}</td>
+                    <td>${new Date(donation.date).toLocaleDateString()}</td>
+                    <td>
+                        <span class="badge badge-${donation.status.toLowerCase()}">
+                            ${donation.status.toLowerCase() === 'pending' ? 'Pending' : 'Received'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn" onclick="openModal(${donation.id})">
+                            Update Status
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            toast.style.background = type === 'success' ? '#22c55e' : '#ef4444';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function openModal(donationId) {
+            selectedDonationId = donationId;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            selectedDonationId = null;
+        }
+
+        async function updateStatus(newStatus) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/donations/${selectedDonationId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus.toLowerCase() }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to update status');
+                }
+
+                // Update local state
+                donations = donations.map(donation =>
+                    donation.id === selectedDonationId 
+                        ? { ...donation, status: newStatus.toLowerCase() }
+                        : donation
+                );
+
+                renderDonations();
+                closeModal();
+                showToast('Status updated successfully');
+
+                // Refresh data from server
+                await fetchDonations();
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showToast(error.message || 'Error updating status', 'error');
+            }
+        }
+
+        // Event listeners
+        closeBtn.onclick = closeModal;
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        statusFilter.onchange = renderDonations;
+
+        // Initial load
+        cleanupStatuses(); // This will clean up the statuses and then fetch donations
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+        <!-- Primary brand colors -->
+        <color name="primary">#000000</color>            <!-- Bright pink - represents love and care -->
+        <color name="primaryDark">#3FD5F4</color>        <!-- Dark pink for status bar -->
+        <color name="primaryLight">#FF79B0</color>       <!-- Light pink for subtle elements -->
+
+        <!-- Secondary colors -->
+        <color name="secondary">#7E57C2</color>          <!-- Purple - represents nobility -->
+        <color name="secondaryDark">#4D2C91</color>      <!-- Dark purple -->
+        <color name="secondaryLight">#B085F5</color>     <!-- Light purple -->
+
+        <!-- Additional colors -->
+        <color name="background">#FFFFFF</color>         <!-- White background -->
+        <color name="surface">#FFFFFF</color>            <!-- White surface -->
+        <color name="error">#B00020</color>              <!-- Error red -->
+        <color name="success">#4CAF50</color>            <!-- Success green -->
+
+        <!-- Text colors -->
+        <color name="textPrimary">#DE000000</color>      <!-- 87% black -->
+        <color name="textSecondary">#99000000</color>    <!-- 60% black -->
+        <color name="textHint">#61000000</color>         <!-- 38% black -->
+        <color name="textWhite">#FFFFFF</color>          <!-- White text -->
+
+
+    <color name="status_received">#22C55E</color>
+    <color name="status_pending">#F59E0B</color>
+
+    <color name="money_icon">#34A853</color>
+    <color name="food_icon">#EA4335</color>
+    <color name="clothes_icon">#4285F4</color>
+    <color name="furniture_icon">#FBBC04</color>
+    <color name="default_icon">#5F6368</color>
+</resources>
+
